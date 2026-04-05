@@ -18,7 +18,7 @@ var game = new Chess();
 var $status = $('#status');
 var currentMode = 'local';
 var userColor = 'white';
-var selectedSquare = null; // Ise har naye game mein empty karna zaroori hai
+var selectedSquare = null;
 var gameRef = null; 
 var roomId = null;
 
@@ -60,7 +60,7 @@ function goBackToMenu() {
     if (gameRef) { gameRef.off(); gameRef = null; } 
     game.reset();
     clearHighlights();
-    selectedSquare = null; // BUG FIX: Purani guti dimaag se nikal do
+    selectedSquare = null; 
     document.getElementById('room-status').innerText = "";
     document.getElementById('room-id-input').value = "";
     hideAllScreens();
@@ -85,12 +85,17 @@ function createRoom() {
     gameRef = database.ref('games/' + roomId);
     gameRef.set({ 
         fen: game.fen(), 
-        hostColor: userColor 
+        hostColor: userColor,
+        joined: false
     });
 
-    gameRef.on('value', function(snapshot) {
+    // BUG FIX: waitListener ko variable banaya taaki baad mein band kar sakein
+    var waitListener = gameRef.on('value', function(snapshot) {
         var data = snapshot.val();
         if (data && data.joined) {
+            // FIX: Dost ke aate hi check karna band karo! Taaki board restart na ho.
+            gameRef.off('value', waitListener); 
+            
             document.getElementById('room-status').innerText = "Friend Joined! Starting...";
             setTimeout(function() { showGameScreen(); history.pushState({page: 'game'}, "Game", ""); }, 1000);
         }
@@ -129,7 +134,8 @@ function setupFirebaseListener() {
     if (!gameRef) return;
     gameRef.on('value', function(snapshot) {
         var data = snapshot.val();
-        if (data && data.fen !== game.fen()) {
+        // FIX: Check data.fen properly
+        if (data && data.fen && data.fen !== game.fen()) {
             game.load(data.fen);
             board.position(data.fen);
             updateStatus();
@@ -152,7 +158,7 @@ function showGameScreen() {
     }
 
     game.reset();
-    selectedSquare = null; // BUG FIX: Naye match me selection reset karo
+    selectedSquare = null; 
 
     var config = {
       draggable: true,
@@ -180,7 +186,6 @@ function clearHighlights() {
 
 var lastTap = 0;
 
-// BUG FIX: $(document).on use kiya hai taaki board refresh hone par touch events disconnect na hon
 $(document).off('touchstart mousedown', '#myBoard .square-55d63, #myBoard .piece-417db');
 $(document).on('touchstart mousedown', '#myBoard .square-55d63, #myBoard .piece-417db', function(e) {
     var now = new Date().getTime();
@@ -249,7 +254,7 @@ function onSnapEnd() { board.position(game.fen()); }
 
 function afterMoveActions() {
     if (currentMode === 'multiplayer' && gameRef) {
-        gameRef.update({ fen: game.fen() });
+        gameRef.update({ fen: game.fen() }); // Move ki details Firebase pe bhej do
     }
     else if (currentMode === 'computer' && !game.game_over()) {
         window.setTimeout(makeComputerMove, 400);
