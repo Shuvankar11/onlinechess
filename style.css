@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #121212; 
+    color: white;
+    overscroll-behavior-y: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.screen-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.screen-container h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-align: center;
+    background: linear-gradient(135deg, #a5d6a7, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.screen-container h3 { margin-bottom: 25px; font-weight: 600; }
+
+.main-btn {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    border: none;
+    padding: 16px 20px;
+    margin: 12px;
+    width: 85%;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.main-btn:active { transform: scale(0.97); }
+
+.color-options { display: flex; gap: 20px; }
+
+.color-btn {
+    width: 100px;
+    height: 100px;
+    border: 4px solid transparent;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    font-size: 1.2rem;
+}
+
+.color-btn.white-choice { background-color: #fff; color: #000; font-weight: 700; }
+.color-btn.black-choice { background-color: #333; color: #fff; border: 2px solid #555; font-weight: 700; }
+.color-btn:active { transform: scale(0.95); }
+
+#game-screen .header {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+#back-btn {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px 15px;
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
+    top: 10px;
+}
+
+#mode-title { font-size: 1.5rem; font-weight: 600; margin-top: -5px; }
+#status { color: #a5d6a7; font-weight: bold; }
+
+/* --- PROFESSIONAL CHESS BOARD COLORS --- */
+.white-1e171 { background-color: #ebecd0 !important; } /* Cream White */
+.black-3c85d { background-color: #739552 !important; } /* Classic Green */
+
+/* --- MOVE HIGHLIGHT CSS --- */
+.highlight-square {
+    box-shadow: inset 0 0 0 4px rgba(255, 255, 51, 0.8) !important;
+    background-color: rgba(255, 255, 51, 0.4) !important;
+}
+/* --- MOVE HINTS & HIGHLIGHTS CSS --- */
+
+/* Jab aap guti select karenge, toh box thoda yellow ho jayega */
+.highlight-selected {
+    background-color: rgba(200, 200, 50, 0.6) !important;
+}
+
+/* Khali jagah par chota dot dikhane ke liye */
+.hint-dot {
+    position: relative;
+}
+.hint-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25%;
+    height: 25%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    pointer-events: none; /* Taki click block na ho */
+}
+
+/* Agar kisi guti ko maar sakta hai, toh uske chaaron taraf circle dikhane ke liye */
+.hint-capture {
+    position: relative;
+}
+.hint-capture::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 5px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+}
+/* --- MOVE HINTS & HIGHLIGHTS CSS (MOBILE FIX) --- */
+.highlight-selected {
+    background-color: rgba(200, 200, 50, 0.6) !important;
+}
+
+.hint-dot { position: relative; }
+.hint-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25%; height: 25%;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none; /* Taaki click block na ho */
+}
+
+.hint-capture { position: relative; }
+.hint-capture::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 5px solid rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none;
+}
+/* --- Multiplayer Input Design --- */
+#room-id-input {
+    background: #2a2a2a;
+    color: white;
+    border: 2px solid #555;
+    padding: 15px;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 250px;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+#room-id-input:focus {
+    border-color: #2196F3;
+}
